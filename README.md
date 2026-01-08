@@ -16,16 +16,6 @@ Amaç; temiz kod, sağlam mimari ve ekip çalışmasını merkeze almak.
 - 🧠 Temiz mimari
 - 🔒 Güvenlik
 - 🌐 Online kullanım
-
----
-
-## 🧰 Kullanılan Teknolojiler
-- **Frontend:** HTML, CSS, JavaScript  
-- **Backend:** Node.js (Express)  
-- **Database:** Firebase / MongoDB  
-- **Realtime:** Socket.io  
-- **Version Control:** Git & GitHub  
-
 ---
 
 ## ⚙️ Kurulum
