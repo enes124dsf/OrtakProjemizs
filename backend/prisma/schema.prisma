@@ -1,0 +1,239 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum Role {
+  STUDENT
+  COMPANY
+  ADMIN
+}
+
+enum DocumentType {
+  CV
+  INTERNSHIP_CERTIFICATE    // Zorunlu staj belgesi
+  MASTER_TEACHER_CERT       // Usta öğretici belgesi
+  COMPANY_LICENSE           // Firma stajyer alım belgesi
+  OTHER
+}
+
+enum DocumentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum InternshipStatus {
+  ACTIVE
+  CLOSED
+  DRAFT
+}
+
+// ==================== MODELS ====================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  avatarUrl     String?
+  role          Role      @default(STUDENT)
+  isBanned      Boolean   @default(false)
+  isVerified    Boolean   @default(false)  // Belgeleri onaylandı mı
+  googleId      String?   @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  studentProfile   StudentProfile?
+  companyProfile   CompanyProfile?
+  documents        Document[]
+  sentMessages     Message[]       @relation("SentMessages")
+  notifications    Notification[]
+  conversationsAsStudent  Conversation[]  @relation("StudentConversations")
+  conversationsAsCompany  Conversation[]  @relation("CompanyConversations")
+
+  @@index([email])
+  @@index([role])
+}
+
+model StudentProfile {
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  school      String    // Okul adı
+  department  String    // Bölüm
+  grade       String    // Sınıf (ör: 11, 12)
+  phone       String?
+  bio         String?
+  skills      String[]  // Yetenekler
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  applications  Application[]
+
+  @@index([school])
+  @@index([department])
+}
+
+model CompanyProfile {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  companyName     String
+  sector          String    // Sektör
+  address         String
+  city            String    @default("Kocaeli")
+  district        String?   // İlçe
+  phone           String
+  website         String?
+  description     String?
+  employeeCount   String?   // Çalışan sayısı aralığı
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  internshipPosts InternshipPost[]
+
+  @@index([companyName])
+  @@index([sector])
+  @@index([city])
+}
+
+model Document {
+  id          String          @id @default(cuid())
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type        DocumentType
+  fileName    String
+  fileUrl     String          // Cloudinary URL
+  publicId    String?         // Cloudinary public ID
+  status      DocumentStatus  @default(PENDING)
+  rejectionReason String?
+  
+  reviewedAt  DateTime?
+  reviewedBy  String?         // Admin user ID
+  
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([type])
+}
+
+model InternshipPost {
+  id              String            @id @default(cuid())
+  companyId       String
+  company         CompanyProfile    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  title           String
+  description     String
+  requirements    String[]          // Gereksinimler
+  departments     String[]          // Hangi bölümlerden öğrenci alınıyor
+  duration        String            // Staj süresi (ör: 20 iş günü)
+  startDate       DateTime?
+  endDate         DateTime?
+  capacity        Int               @default(1)  // Kaç stajyer alınacak
+  status          InternshipStatus  @default(ACTIVE)
+  
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  // Relations
+  applications    Application[]
+
+  @@index([companyId])
+  @@index([status])
+  @@index([departments])
+}
+
+model Application {
+  id              String            @id @default(cuid())
+  studentId       String
+  student         StudentProfile    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  internshipId    String
+  internship      InternshipPost    @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+  
+  status          ApplicationStatus @default(PENDING)
+  coverLetter     String?           // Ön yazı
+  
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@unique([studentId, internshipId])  // Aynı ilana tekrar başvuru yapılamaz
+  @@index([studentId])
+  @@index([internshipId])
+  @@index([status])
+}
+
+model Conversation {
+  id          String    @id @default(cuid())
+  studentId   String
+  student     User      @relation("StudentConversations", fields: [studentId], references: [id], onDelete: Cascade)
+  companyId   String
+  company     User      @relation("CompanyConversations", fields: [companyId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  messages    Message[]
+
+  @@unique([studentId, companyId])
+  @@index([studentId])
+  @@index([companyId])
+}
+
+model Message {
+  id              String        @id @default(cuid())
+  conversationId  String
+  conversation    Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId        String
+  sender          User          @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  
+  content         String
+  isRead          Boolean       @default(false)
+  
+  createdAt       DateTime      @default(now())
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([createdAt])
+}
+
+model Notification {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title       String
+  message     String
+  type        String    // application, message, document, system
+  linkUrl     String?   // Tıklandığında gidilecek sayfa
+  isRead      Boolean   @default(false)
+  
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}

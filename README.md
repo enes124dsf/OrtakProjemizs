@@ -1,66 +1,81 @@
-# 🚀 Project Name
-> Ali & Enes tarafından geliştirilen, gelecekte büyük hedeflere evrilebilecek web tabanlı ortak yazılım projesi.
+# StajMatch Kocaeli
+
+> Kocaeli bölgesindeki öğrenciler ile stajyer arayan firmaları güvenli, belgeli ve onaylı şekilde eşleştiren platform.
 
 ---
 
-## 📌 Proje Tanımı
-Bu proje şu an için **belirli bir ürüne kilitlenmemiş**, ancak ileriye dönük **ticari ve ölçeklenebilir** fikirler üretmek amacıyla başlatılmıştır.
+## 🎯 Proje Amacı
 
-Ana hedef:
-- Ortak yazılım geliştirme kültürü oluşturmak
-- Web tabanlı projelerde tecrübe kazanmak
-- Gelecekte **gerçek bir ürüne** dönüşebilecek altyapıyı kurmak
+Öğrencilerin zorunlu staj süreçlerini kolaylaştırmak ve firmaların nitelikli stajyer bulmasını sağlamak.
 
 ---
 
-## 🧠 Planlanan Proje
-**E-Ticaret Uygulaması**
+## 👥 Roller
 
-Planlanan özellikler:
-- Ürün listeleme
-- Kullanıcı hesapları
-- Sepet & ödeme altyapısı
-- Admin panel
-- Ölçeklenebilir backend mimarisi
-
-> Not: Proje aktif geliştirme sürecindedir, kapsam zamanla genişletilecektir.
+| Rol | Yetkiler |
+|-----|----------|
+| **Öğrenci** | Profil oluşturma, belge yükleme, ilan görüntüleme, başvuru yapma, mesajlaşma |
+| **Firma** | Firma profili, belge yükleme, ilan yayınlama, başvuru inceleme, mesajlaşma |
+| **Admin** | Belge onaylama, kullanıcı yönetimi, hesap engelleme |
 
 ---
 
-## 🧰 Kullanılan Teknolojiler
-Web tabanlı geliştirme esas alınır.
+## 🧰 Teknoloji Stack
 
-- **Frontend:** HTML, CSS, JavaScript  
-- **Backend:** Node.js (Express)  
-- **Veritabanı:** Firebase / MongoDB  
-- **Versiyon Kontrol:** Git & GitHub  
-- **Dağıtım:** Vercel / Render / Railway  
-
----
-
-## 👥 Ekip Yapısı
-### 👑 Kurucu
-- **Enes**  
-  - Proje sahibi  
-  - Ana mimari kararlar  
-  - Repository yönetimi  
-
-### 🤝 Ortak
-- **Ali**  
-  - Geliştirme ortağı  
-  - Özellik geliştirme  
-  - Frontend / Backend katkıları  
+| Katman | Teknoloji |
+|--------|-----------|
+| Frontend | Next.js 14, Vanilla CSS |
+| Backend | Node.js, Express, TypeScript |
+| Database | PostgreSQL (Supabase) |
+| ORM | Prisma |
+| Auth | Google OAuth, JWT |
+| Real-time | Socket.IO |
+| File Storage | Cloudinary |
+| Deployment | Vercel (Frontend), Render (Backend) |
 
 ---
 
-## 🔗 Ortak Projeye Nasıl Dahil Olunur?
-Bu proje **GitHub üzerinden** ortak geliştirilir.
+## � Proje Yapısı
 
-### 1️⃣ Repo’ya Erişim
-- Kurucu (Enes), ortağı **GitHub Collaborator** olarak ekler.
+```
+StajMatch/
+├── frontend/          # Next.js uygulaması
+├── backend/           # Express API
+├── .env.example       # Environment değişkenleri
+└── README.md
+```
 
-### 2️⃣ Projeyi Bilgisayara Alma
+---
+
+## 🚀 Kurulum
+
+### Gereksinimler
+- Node.js 18+
+- npm veya yarn
+
+### Frontend
 ```bash
-git clone https://github.com/USERNAME/REPO.git
-cd REPO
+cd frontend
 npm install
+npm run dev
+```
+
+### Backend
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+---
+
+## 👨‍💻 Ekip
+
+- **Enes** - Kurucu, Proje Yöneticisi
+- **Ali** - Geliştirme Ortağı
+
+---
+
+## 📄 Lisans
+
+Bu proje özel kullanım içindir.
